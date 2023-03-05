@@ -1,18 +1,19 @@
 [package]
-name = "cmudict-fast"
+name = "cmudict-fast-custom-getall"
 edition = "2018"
 version = "0.8.0"
 authors = [
     "Benjamin Hinchliff <benjamin.hinchiff@gmail.com>",
     "Paul Woolcock <paul@woolcock.us>",
+    "David Fryd <david@fryd.com>"
 ]
-repository = "https://github.com/BenjaminHinchliff/cmudict-fast.git"
-homepage = "https://github.com/BenjaminHinchliff/cmudict-fast"
+# repository = "https://github.com/BenjaminHinchliff/cmudict-fast.git"
+# homepage = "https://github.com/BenjaminHinchliff/cmudict-fast"
 license = "MIT/Apache-2.0"
-documentation = "https://docs.rs/cmudict-fast"
+# documentation = "https://docs.rs/cmudict-fast"
 description = """
-An updated and improved fork of the library for using the CMUSphinx
-pronunciation dictionary
+A slightly updated fork of the library for using the CMUSphinx
+pronunciation dictionary (includes a getall method).
 """
 readme = "README.md"
 keywords = ["cmudict"]
