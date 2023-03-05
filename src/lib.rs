@@ -1,13 +1,13 @@
 //! The pronunciation dictionary from Carnegie Mellon University's CMUSphinx project
 #![deny(missing_docs)]
 
-use std::{io::Cursor, fs::File};
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use std::io::{BufRead, BufReader};
 use std::path::Path;
 use std::str::FromStr;
-use std::{collections::HashMap};
-#[cfg(feature = "serde")]
-use serde::{Serialize, Deserialize};
+use std::{fs::File, io::Cursor};
 
 mod core;
 mod errors;
@@ -45,7 +45,7 @@ impl Cmudict {
     /// # }
     /// ```
     pub fn new<P: AsRef<Path>>(dict: P) -> Result<Cmudict> {
-        let file = File::open(dict)?; 
+        let file = File::open(dict)?;
         let buf = BufReader::new(file);
         let map = make_mapping(buf)?;
         Ok(Cmudict { map })
@@ -84,16 +84,22 @@ impl Cmudict {
     pub fn get(&self, s: &str) -> Option<&[Rule]> {
         self.map.get(s).map(|r| &r[..])
     }
+
+    /// Retrieve the entire dictionary
+    /// (custom method -DF)
+    pub fn getall(&self) -> &HashMap<String, Vec<Rule>> {
+        &self.map
+    }
 }
 
 impl FromStr for Cmudict {
     type Err = Error;
 
     fn from_str(s: &str) -> ::std::result::Result<Self, Self::Err> {
-       let cursor = Cursor::new(s);
-       Ok(Self {
-           map: make_mapping(cursor)?,
-       })
+        let cursor = Cursor::new(s);
+        Ok(Self {
+            map: make_mapping(cursor)?,
+        })
     }
 }
 
@@ -204,18 +210,24 @@ mod tests {
 
         let every = d.get("every").unwrap();
         let result = vec![
-            Rule::new("every".to_string(), vec![
-                Symbol::EH(Stress::Primary),
-                Symbol::V,
-                Symbol::ER(Stress::None),
-                Symbol::IY(Stress::None)
-            ]),
-            Rule::new("every(2)".to_string(), vec![
-                Symbol::EH(Stress::Primary),
-                Symbol::V,
-                Symbol::R,
-                Symbol::IY(Stress::None),
-            ]),
+            Rule::new(
+                "every".to_string(),
+                vec![
+                    Symbol::EH(Stress::Primary),
+                    Symbol::V,
+                    Symbol::ER(Stress::None),
+                    Symbol::IY(Stress::None),
+                ],
+            ),
+            Rule::new(
+                "every(2)".to_string(),
+                vec![
+                    Symbol::EH(Stress::Primary),
+                    Symbol::V,
+                    Symbol::R,
+                    Symbol::IY(Stress::None),
+                ],
+            ),
         ];
         assert_eq!(every, &result);
     }
